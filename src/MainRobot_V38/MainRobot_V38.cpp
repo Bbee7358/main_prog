@@ -1337,7 +1337,7 @@ void loop(void)
     Serial.print("  GoDir:"); Serial.print(GoDir);
     Serial.print("  BValue:"); Serial.print(BValue);
     Serial.print("  BAngle:"); Serial.print(BAngle);  
-    Serial.print("  a")  
+    Serial.print("  a");
     Serial.print("  a:"); Serial.println(a);
   };
 
