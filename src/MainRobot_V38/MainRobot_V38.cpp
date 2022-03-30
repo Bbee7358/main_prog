@@ -1334,10 +1334,9 @@ void loop(void)
     // Serial.print("  h:"); Serial.print(h);
     // Serial.print("  c"); Serial.print(c);
     // Serial.print("  j:"); Serial.print(j);
-    Serial.print("  GoDir:"); Serial.print(GoDir);
-    Serial.print("  BValue:"); Serial.print(BValue);
-    Serial.print("  BAngle:"); Serial.print(BAngle);  
-    Serial.print("  a");
+    // Serial.print("  GoDir:"); Serial.print(GoDir);
+    // Serial.print("  BValue:"); Serial.print(BValue);
+    // Serial.print("  BAngle:"); Serial.print(BAngle);  
     Serial.print("  a:"); Serial.println(a);
   };
 
