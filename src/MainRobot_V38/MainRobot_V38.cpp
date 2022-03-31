@@ -720,11 +720,11 @@ void loop(void)
               {
                 if (BAngle > 0)  //右側にボールがあったら
                 {
-                  GoDir = BAngle + 7*BValue/10-385;
+                  GoDir = BAngle + 3*BValue/5-300;
                 }
                 else
                 {
-                  GoDir = BAngle - 7*BValue/10+385;
+                  GoDir = BAngle - 3*BValue/5+300;
                 }
                 if(GoDir > 180)  //180°以降の数字は本来-となるべきなので左側仕様のマイナスにしなければならない
                 {
@@ -846,11 +846,11 @@ void loop(void)
               {
                 if (BAngle > 0)  //右側にボールがあったら
                 {
-                  GoDir = BAngle + 7*BValue/10-385;
+                  GoDir = BAngle + 3*BValue/5-300;
                 }
                 else
                 {
-                  GoDir = BAngle - 7*BValue/10+385;
+                  GoDir = BAngle - 3*BValue/5+300;
                 }
                 if(GoDir > 180)  //180°以降の数字は本来-となるべきなので左側仕様のマイナスにしなければならない
                 {
