@@ -59,6 +59,9 @@
 #define LINE42 A10
 #define LINE41 A8
 
+//LED
+#define LEDdesu 8
+
 //ライン処理
 int L_x[2]; //ラインが反応したときにそのラインの座標を記録する。一回目を[0]、二回目を[1]とする([]には0か1が入る)
 int L_y[2]; //ラインが反応したときにそのラインの座標を記録する。一回目を[0]、二回目を[1]とする([]には0か1が入る)
@@ -220,6 +223,8 @@ void setup(void)
   pinMode(LINE43, INPUT);
   pinMode(LINE42, INPUT);
   pinMode(LINE41, INPUT);
+
+  pinMode(LEDdesu,OUTPUT);
 };
 
 void loop(void)
@@ -231,6 +236,7 @@ void loop(void)
 
   if (aa == 0)
   {             //スタートするまでのステート <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    digitalWrite(LEDdesu,HIGH);
     if (a == 0) //ステート0 キャリブレーション スイッチが押されてない時に押されるまで待つ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
@@ -371,6 +377,7 @@ void loop(void)
   }
   else if (aa == 10) //ラインの検出、方位の確認、ボールの値を検出、どこのステートに行くかを決める <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   {
+    digitalWrite(LEDdesu,LOW);
     //ロボットを速く動かす（ボールを追う、ラインから離れる）時のモーターの設定
     if (analogRead(LINE13) > LineValue) //前にラインがある
     {
@@ -1924,4 +1931,4 @@ void loop(void)
       j = 0; //ラインセンサーリセット
     };
   }
-}
+};
