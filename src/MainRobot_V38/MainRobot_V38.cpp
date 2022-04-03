@@ -1921,8 +1921,7 @@ void loop(void)
 
   if (serial != 0) // 0ではなく1だったら、シリアルモニターを表示
   {
-    Serial.print("x:");
-    Serial.print(event.orientation.x);
+    Serial.print("x:"); Serial.print(event.orientation.x);
     //    Serial.print("  DIR20:"); Serial.print(DIR20);
     //    Serial.print("  DIR90:"); Serial.print(DIR90);
     //    Serial.print("  DIR180:"); Serial.print(DIR180);
@@ -1937,10 +1936,8 @@ void loop(void)
     // Serial.print("  M3:"); Serial.print(Motor3);
     // Serial.print("  M4:"); Serial.print(Motor4);
     // Serial.print("  DoTime:"); Serial.print(DoTime);
-    Serial.print("  BAtack1");
-    Serial.print(BAtack1);
-    Serial.print("  aa:");
-    Serial.print(aa);
+    Serial.print("  BAtack1"); Serial.print(BAtack1);
+    Serial.print("  aa:"); Serial.print(aa);
     Serial.print("  h:"); Serial.print(h);
     Serial.print("  i:"); Serial.print(i);
     Serial.print("  Lpast:"); Serial.print(Lpast);
