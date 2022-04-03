@@ -145,6 +145,8 @@ float kkd = 134;           //微分ゲイン(姿勢制御だけ用)
 unsigned long NowTime;     // D制御で回転時間を出すために
 unsigned long OldTime;     // D制御で回転時間を出すために
 
+int hata = 0;  //プログロムの状態を見たいときに自由に使う（プログラムには必要ない）
+
 int serial = 1; //シリアルモニターを表示させるときはここを0から1にする
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
@@ -1231,6 +1233,7 @@ void loop(void)
     }
     else //ラインが反応していなかったら
     {
+      hata = 1;
       if (i == 0) //ラインが動作するステートにいるときに反応していなかったら
       {
         if (DIR90 < DIR270) //-------------------------------------------------------------------------------------  問題
@@ -1681,8 +1684,8 @@ void loop(void)
     if (Motor4 == 0)
     { //もし停止しろ（0）と言われたら停止
       digitalWrite(INA4, LOW);
-    digitalWrite(INB4, LOW); //停止
-    m = 0;                   //変換していないというフラグ
+      digitalWrite(INB4, LOW); //停止
+      m = 0;                   //変換していないというフラグ
     };
     if (Motor4 > 250)
     { //もし255を超えると、値が一からになってしまうので、ならないようにするプログラム
@@ -1921,13 +1924,13 @@ void loop(void)
     Serial.print("  h:"); Serial.print(h);
     Serial.print("  i:"); Serial.print(i);
     Serial.print("  Lpast:"); Serial.print(Lpast);
+    Serial.print("  hata:"); Serial.print(hata);
     // Serial.print("  c"); Serial.print(c);
     // Serial.print("  j:"); Serial.print(j);
     // Serial.print("  GoDir:"); Serial.print(GoDir);
     // Serial.print("  BValue:"); Serial.print(BValue);
     // Serial.print("  BAngle:"); Serial.print(BAngle);
-    Serial.print("  a:");
-    Serial.println(a);
+    Serial.print("  a:");Serial.println(a);
   };
 
   if (LineResetT < NowTime)
