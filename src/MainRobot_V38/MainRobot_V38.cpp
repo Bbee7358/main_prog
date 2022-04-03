@@ -66,7 +66,7 @@
 int L_x[2]; //ラインが反応したときにそのラインの座標を記録する。一回目を[0]、二回目を[1]とする([]には0か1が入る)
 int L_y[2]; //ラインが反応したときにそのラインの座標を記録する。一回目を[0]、二回目を[1]とする([]には0か1が入る)
 int Lnum;   //ラインに反応した回数
-int Lpast;  //前に反応したラインの番号を記録する
+int Lpast = 0;  //前に反応したラインの番号を記録する
 
 int a = 0;   // aはint型初期値は0（ステートのボックス）
 int aa = 0;  // aaは0（サブファイルの変わり）
@@ -385,6 +385,7 @@ void loop(void)
     {
       if (Lpast != 13) //前回反応したセンサーがこのセンサーでなければ（同じセンサーでラインを認識してしまうとロボットの動きが見れないから）
       {
+        hata = 0;
         if (Lnum >= 1) // 2回目のラインの反応があったら行動する
         {
           //2回目のラインの座標を記録
@@ -1356,6 +1357,23 @@ void loop(void)
                   GoDir = 360 + GoDir;
                 }
               };
+
+              if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+              {
+                h = 10; //右側前進
+              }
+              else if (90 <= GoDir && GoDir < 180) //ボールが-90°~0°の方向にあったら
+              {
+                h = 20; //右側後進
+              }
+              else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+              {
+                h = 30; //左側前進
+              }
+              else //ボールが90°~180°の方向にあったら
+              {
+                h = 40; //左側後進
+              };
             }
             else //周りにボールがなかったら
             {
@@ -1472,6 +1490,23 @@ void loop(void)
                   GoDir = 360 + GoDir;
                 }
               };
+
+              if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+              {
+                h = 10; //右側前進
+              }
+              else if (90 <= GoDir && GoDir < 180) //ボールが-90°~0°の方向にあったら
+              {
+                h = 20; //右側後進
+              }
+              else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+              {
+                h = 30; //左側前進
+              }
+              else //ボールが90°~180°の方向にあったら
+              {
+                h = 40; //左側後進
+              };
             }
             else //周りにボールがなかったら
             {
@@ -1534,42 +1569,23 @@ void loop(void)
         D = (OldDeviationDir - NewDeviationDir) / (NowTime - OldTime); // D制御
         OldTime = NowTime;                                             // D制御の時に回転時間を使いたいため
 
-        if(e ==0)  //ボールによって方向が決められていたら
+        if(e != 0)  //ボールによって方向が決められていたら
         {
           if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
           {
-            h = 10; //右側前進
+            h = 50; //右側前進
           }
           else if (90 <= GoDir && GoDir < 180) //ボールが-90°~0°の方向にあったら
           {
-            h = 20; //右側後進
+            h = 60; //右側後進
           }
           else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
           {
-            h = 30; //左側前進
+            h = 70; //左側前進
           }
           else //ボールが90°~180°の方向にあったら
           {
-            h = 40; //左側後進
-          };
-        }
-        else  //ラインによって方向が決められていたら
-        {
-          if(GoDir == 0)  //ラインから前進して離れたいとき
-          {
-            h = 50;
-          }
-          else if(GoDir == -90)  //ラインから左進して離れたいとき
-          {
-            h = 60;
-          }
-          else if (GoDir == 180)  //ラインから後進して離れたいとき
-          {
-            h = 70;
-          }
-          else  //ラインから右進して離れたいとき
-          {
-            h = 80;
+            h = 80; //左側後進
           };
         }
 
@@ -1829,71 +1845,75 @@ void loop(void)
 
       aa = 15; //動作を決める
     }
-    else if (a == 50) // ラインから前進して離れる~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    else if (a == 50) // 0°~90°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
       {
+        g = 0; //ボールを追いかける動作をしたことを記録する（ラインから離れる場合に必要になるため）
         b = a;
       };
 
       NowTime = millis();
-      DoTime = NowTime + LINEMtime;
+      DoTime = NowTime + 100; // 100秒
 
-      Motor1 = -100 * MPOWER6 * MotorR1 + Kp * P - Kd * D;
-      Motor2 = 100 * MPOWER6 * MotorR2 + Kp * P - Kd * D;
-      Motor3 = 100 * MPOWER6 * MotorR3 + Kp * P - Kd * D;
-      Motor4 = -100 * MPOWER6 * MotorR4 + Kp * P - Kd * D;
+      Motor1 = (20 / 9 * GoDir - 100) * MPOWER5 * MotorR1 + Kp * P - Kd * D;  //右前
+      Motor2 = 100 * MPOWER5 * MotorR2 + Kp * P - Kd * D;                     //左前
+      Motor3 = (-20 / 9 * GoDir + 100) * MPOWER5 * MotorR3 + Kp * P - Kd * D; //左後ろ
+      Motor4 = -100 * MPOWER5 * MotorR4 + Kp * P - Kd * D;                    //右後ろ
 
       aa = 15; //動作を決める
     }
-    else if (a == 60) // ラインから左進して離れる~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    else if (a == 60) // 90°~180°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
       {
+        g = 0; //ボールを追いかける動作をしたことを記録する（ラインから離れる場合に必要になるため）
         b = a;
       };
 
       NowTime = millis();
-      DoTime = NowTime + LINEMtime;
+      DoTime = NowTime + 100;
 
-      Motor1 = -100 * MPOWER6 * MotorR1 + Kp * P - Kd * D;
-      Motor2 = -100 * MPOWER6 * MotorR2 + Kp * P - Kd * D;
-      Motor3 = 100 * MPOWER6 * MotorR3 + Kp * P - Kd * D;
-      Motor4 = 100 * MPOWER6 * MotorR4 + Kp * P - Kd * D;
+      Motor1 = 100 * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack1;                     //右前
+      Motor2 = (-20 / 9 * GoDir + 300) * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack2; //左前
+      Motor3 = -100 * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack3;                    //左後ろ
+      Motor4 = (20 / 9 * GoDir - 300) * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack4;  //右後ろ
 
       aa = 15; //動作を決める
     }
-    else if (a == 70) // ラインから後進して離れる~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    else if (a == 70) // 0°~-90°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
       {
+        g = 0; //ボールを追いかける動作をしたことを記録する（ラインから離れる場合に必要になるため）
         b = a;
       };
 
       NowTime = millis();
-      DoTime = NowTime + LINEMtime;
+      DoTime = NowTime + 100; // 100秒
 
-      Motor1 = 100 * MPOWER6 * MotorR1 + Kp * P - Kd * D;
-      Motor2 = -100 * MPOWER6 * MotorR2 + Kp * P - Kd * D;
-      Motor3 = -100 * MPOWER6 * MotorR3 + Kp * P - Kd * D;
-      Motor4 = 100 * MPOWER6 * MotorR4 + Kp * P - Kd * D;
+      Motor1 = -100 * MPOWER5 * MotorR1 + Kp * P - Kd * D;                    //右前
+      Motor2 = (20 / 9 * GoDir + 100) * MPOWER5 * MotorR2 + Kp * P - Kd * D;  //左前
+      Motor3 = 100 * MPOWER5 * MotorR3 + Kp * P - Kd * D;                     //左後ろ
+      Motor4 = (-20 / 9 * GoDir - 100) * MPOWER5 * MotorR4 + Kp * P - Kd * D; //右後ろ
 
       aa = 15; //動作を決める
     }
-    else if (a == 80) // ラインから右進して離れる~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    else if (a == 80) //-90°~-180°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
       {
+        g = 0; //ボールを追いかける動作をしたことを記録する（ラインから離れる場合に必要になるため）
         b = a;
       };
 
       NowTime = millis();
-      DoTime = NowTime + LINEMtime;
+      DoTime = NowTime + 100; // 100秒
 
-      Motor1 = 100 * MPOWER6 * MotorR1 + Kp * P - Kd * D;
-      Motor2 = 100 * MPOWER6 * MotorR2 + Kp * P - Kd * D;
-      Motor3 = -100 * MPOWER6 * MotorR3 + Kp * P - Kd * D;
-      Motor4 = -100 * MPOWER6 * MotorR4 + Kp * P - Kd * D;
+      Motor1 = (-20 / 9 * GoDir - 300) * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack1;
+      Motor2 = -100 * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack2;
+      Motor3 = (20 / 9 * GoDir + 300) * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack3;
+      Motor4 = 100 * MPOWER5 * MotorR1 + Kp * P - Kd * D + BAtack4;
 
       aa = 15; //動作を決める
     }
@@ -1909,7 +1929,7 @@ void loop(void)
     //    Serial.print("  DIR270:"); Serial.print(DIR270);
     //    Serial.print("  DIR340:"); Serial.print(DIR340);
     // Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
-    // Serial.print("  LINE13:"); Serial.print(LINE13);
+    Serial.print("  LINE13:"); Serial.print(LINE13);
     // Serial.print("  LINEMtime:"); Serial.print(LINEMtime);
     //    Serial.print("  MPlast1:"); Serial.print(MPlast1);
     // Serial.print("  M1:"); Serial.print(Motor1);
