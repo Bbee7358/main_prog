@@ -1678,7 +1678,7 @@ void loop(void)
     {
       digitalWrite(INA4, LOW);
       digitalWrite(INB4, HIGH); //逆転
-      Motor4 = Motor4 * (-1);   //モーター値を正の数に直す（モータ値だから正の数でないといけない）
+      Motor4 = Motor4 * -1;   //モーター値を正の数に直す（モータ値だから正の数でないといけない）
       m = 1;                    //モーターの値を負の数から正の数に直したのでそれをもとに戻すためのフラグ
     };
     if (Motor4 == 0)
@@ -1925,6 +1925,7 @@ void loop(void)
     Serial.print("  i:"); Serial.print(i);
     Serial.print("  Lpast:"); Serial.print(Lpast);
     Serial.print("  hata:"); Serial.print(hata);
+    Serial.print("  b:"); Serial.print(b);
     // Serial.print("  c"); Serial.print(c);
     // Serial.print("  j:"); Serial.print(j);
     // Serial.print("  GoDir:"); Serial.print(GoDir);
