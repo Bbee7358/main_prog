@@ -1594,6 +1594,91 @@ void loop(void)
       };
     };
   }
+  else if(aa == 12)  //ラインから離れるときうまく離れられているかの経過を見る
+  {
+    if (analogRead(LINE13) > LineValue) //前にラインがある
+    {
+      if(L_y[0] == 3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE12) > LineValue) //前にラインがある
+    {
+      if(L_y[0] == 2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE23) > LineValue) //左にラインがある
+    {
+      if(L_x[0] == -3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE22) > LineValue) //左にラインがある
+    {
+      if(L_x[0] == -2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE21) > LineValue) //左にラインがある
+    {
+      if(L_x[0] == -1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE33) > LineValue) //後ろにラインがある
+    {
+      if(L_y[0] == -3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE32) > LineValue) //後ろにラインがある
+    {
+      if(L_y[0] == -2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE31) > LineValue) //後ろにラインがある
+    {
+      if(L_y[0] == -1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE43) > LineValue) //右にラインがある
+    {
+      if(L_x[0] == 3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE42) > LineValue) //右にラインがある
+    {
+      if(L_x[0] == 2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+    else if (analogRead(LINE41) > LineValue) //右にラインがある
+    {
+      if(L_x[0] == 1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
+      {
+        aa = 10;
+      }
+    }
+
+    if (DoTime < NowTime)  //ようわからんけどラインから離れる動作をする時間が経ったら、もう強制的に全センサーを見るサブステートに行く
+    {
+      aa = 10;  //全センサー
+    };
+  }
   else if (aa == 15)
   { //最終的に動作をするところ
     // motorの向きを設定（あらかじめ前のステートでモーターに±をつけ、それから正転、逆転を判断）
@@ -1713,7 +1798,14 @@ void loop(void)
       Motor4 = Motor4 * -1;
     }
 
-    aa = 10;
+    if(e == 0)  //ボールによって進行方向が決められていたら
+    {
+      aa = 10;  //全センサーの動きを見る
+    }
+    else  //ラインによって進行方向が決められていたら
+    {
+      aa = 12;  //ラインから離れるときのラインの経過を見る
+    }
   }
   else if (aa == 20)
   {             //動作をするステートブロック <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1922,15 +2014,15 @@ void loop(void)
   if (serial != 0) // 0ではなく1だったら、シリアルモニターを表示
   {
     Serial.print("x:"); Serial.print(event.orientation.x);
-    //    Serial.print("  DIR20:"); Serial.print(DIR20);
-    //    Serial.print("  DIR90:"); Serial.print(DIR90);
-    //    Serial.print("  DIR180:"); Serial.print(DIR180);
-    //    Serial.print("  DIR270:"); Serial.print(DIR270);
-    //    Serial.print("  DIR340:"); Serial.print(DIR340);
+    // Serial.print("  DIR20:"); Serial.print(DIR20);
+    // Serial.print("  DIR90:"); Serial.print(DIR90);
+    // Serial.print("  DIR180:"); Serial.print(DIR180);
+    // Serial.print("  DIR270:"); Serial.print(DIR270);
+    // Serial.print("  DIR340:"); Serial.print(DIR340);
     // Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
     Serial.print("  LINE13:"); Serial.print(LINE13);
     // Serial.print("  LINEMtime:"); Serial.print(LINEMtime);
-    //    Serial.print("  MPlast1:"); Serial.print(MPlast1);
+    // Serial.print("  MPlast1:"); Serial.print(MPlast1);
     // Serial.print("  M1:"); Serial.print(Motor1);
     // Serial.print("  M2:"); Serial.print(Motor2);
     // Serial.print("  M3:"); Serial.print(Motor3);
