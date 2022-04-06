@@ -450,12 +450,13 @@ void loop(void)
           Lpast = 13; // 2回目以降にこのセンサを見ないようにするため
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+
         }
 
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE12) > LineValue) //前にラインがある
@@ -532,7 +533,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE23) > LineValue) //左にラインがある
@@ -609,7 +610,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE22) > LineValue) //左にラインがある
@@ -686,7 +687,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE21) > LineValue) //左にラインがある
@@ -763,7 +764,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE33) > LineValue) //後ろにラインがある
@@ -840,7 +841,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE32) > LineValue) //後ろにラインがある
@@ -917,7 +918,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE31) > LineValue) //後ろにラインがある
@@ -994,7 +995,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE43) > LineValue) //右にラインがある
@@ -1071,7 +1072,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE42) > LineValue) //右にラインがある
@@ -1148,7 +1149,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE41) > LineValue) //右にラインがある
@@ -1225,7 +1226,7 @@ void loop(void)
         LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
-        LineResetT += 2000; //ラインがあったらタイマースタート
+        LineResetT += 1500; //ラインがあったらタイマースタート
       }
     }
     else //ラインが反応していなかったら
@@ -2038,6 +2039,6 @@ void loop(void)
 
   if (LineResetT < NowTime)
   {
-    j = 0; //ラインセンサーリセット
+    i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
   };
 };
