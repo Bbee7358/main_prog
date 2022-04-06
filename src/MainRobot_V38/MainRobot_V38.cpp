@@ -2037,6 +2037,7 @@ void loop(void)
     Serial.print("  a:");Serial.println(a);
   };
 
+  NowTime = millis();
   if (LineResetT < NowTime)
   {
     i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
