@@ -1597,6 +1597,8 @@ void loop(void)
     {
       if(L_y[0] == 3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1604,6 +1606,8 @@ void loop(void)
     {
       if(L_y[0] == 2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1611,6 +1615,8 @@ void loop(void)
     {
       if(L_x[0] == -3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1618,6 +1624,8 @@ void loop(void)
     {
       if(L_x[0] == -2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1625,6 +1633,8 @@ void loop(void)
     {
       if(L_x[0] == -1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1632,6 +1642,8 @@ void loop(void)
     {
       if(L_y[0] == -3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1639,6 +1651,8 @@ void loop(void)
     {
       if(L_y[0] == -2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1646,6 +1660,8 @@ void loop(void)
     {
       if(L_y[0] == -1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1653,6 +1669,8 @@ void loop(void)
     {
       if(L_x[0] == 3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1660,6 +1678,8 @@ void loop(void)
     {
       if(L_x[0] == 2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
@@ -1667,16 +1687,11 @@ void loop(void)
     {
       if(L_x[0] == 1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
+        NowTime = millis();
+        LineResetT = NowTime + 100;
         aa = 10;
       }
     }
-
-    NowTime = millis();
-    if (DoTime < NowTime)  //ようわからんけどラインから離れる動作をする時間が経ったら、もう強制的に全センサーを見るサブステートに行く
-    {
-      e = 0;  //これが1だとラインが反応して動いていると考えてずっとラインから離れようとしてしまう
-      aa = 10;  //全センサー
-    };
   }
   else if (aa == 15)
   { //最終的に動作をするところ
@@ -2008,7 +2023,7 @@ void loop(void)
     // Serial.print("  DIR180:"); Serial.print(DIR180);
     // Serial.print("  DIR270:"); Serial.print(DIR270);
     // Serial.print("  DIR340:"); Serial.print(DIR340);
-    // Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
+    Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
     // Serial.print("  LINE13:"); Serial.print(LINE13);
     // Serial.print("  LINEMtime:"); Serial.print(LINEMtime);
     // Serial.print("  MPlast1:"); Serial.print(MPlast1);
@@ -2021,7 +2036,7 @@ void loop(void)
     // Serial.print("  BAtack1"); Serial.print(BAtack1);
     // Serial.print("  h:"); Serial.print(h);
     Serial.print("  i:"); Serial.print(i);
-    Serial.print("  Lpast:"); Serial.print(Lpast);
+    // Serial.print("  Lpast:"); Serial.print(Lpast);
     // Serial.print("  hata:"); Serial.print(hata);
     // Serial.print("  b:"); Serial.print(b);
     Serial.print("  L_x[0]:"); Serial.print(L_x[0]);
@@ -2040,6 +2055,9 @@ void loop(void)
   NowTime = millis();
   if (LineResetT < NowTime)
   {
+    e = 0;  //これが1だとラインが反応して動いていると考えてずっとラインから離れようとしてしまう
+    Lnum = 0;  //ラインの回数をリセット
     i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
+    aa = 10;  //ラインを見てから少し時間が経ちすぎたので全センサーを見るようにする
   };
 };
