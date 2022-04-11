@@ -75,10 +75,10 @@ int c = 0;   // cはint型初期値は0（ボールセンサの番号）
 int d = 0;   // dはint型初期値は0（スタートスイッチのダブルタッチ防止の変数
 int e = 0;   //eはボールを見て動くのか、ラインを見て動くのかを決めるためのフラグ　（e = 0の時はボールを見て判断するとき、1の時はラインを見て判断するとき）
 int f = 1;   //ロボットが回り込みをしていたかを記録し、回り込みの長さを決める変数
-
+int g = 0;   //姿勢制御をする場合ボールを見ずにやらないとうまくできないので
 int h = 999; //タイマーでステートを動かす時間を決める時にステートを一時的に決めhに入る。そして、時間が経ったらaにｈを代入する
 int i = 0;   //もし動作しているステートにいるときにラインが反応したらそれ以上違うステートに行くのをやめるために0から1にする
-int j = 0;   //ラインから離れる時、直前に左右どちらに行っていたかを記録する変数(i = 0の時は、右センサが命令していたとき。i = 1の時は、左センサが命令していたとき。)
+
 int m = 0;   //最終、モーターの出力を変換した場合に、負の数に戻すためのフラグ
 
 unsigned long LineResetT = 0; // lineの時間をはかり、2秒経ったらjをリセット（999）にする
@@ -119,17 +119,14 @@ int LineValue = 300;
 
 // Dirの値を記録
 int DIR0;   // 0°
-int DIR20;  // 20°
+int DIR5;  // 20°
 int DIR90;  // 90°
 int DIR180; // 180°
 int DIR270; // 270°
-int DIR340; // 340°
+int DIR355; // 340°
 
 float GoDir; //ロボットの進行方向を入れる
 
-long LINEMtime = 0;       //"KINEMtimeL""KINEMtimeS"のどちらかの値が入り、最終的に何秒間ラインから離れるかを決める
-int KINEMtimeL = 200;     //ラインから離れるときに何秒間離れるか（longVer）
-int KINEMtimeS = 100;     //ラインから離れるときに何秒間離れるか（shortVer）
 unsigned long DoTime = 0; //ロボットを動かす時間
 
 // PD制御
@@ -141,13 +138,13 @@ float D;                   // D制御の最終値
 float Kp = 0.5;            //比例ゲイン(動作併用用)
 float Kd = 0;              //微分ゲイン(動作併用用)
 float kkp = 1.5;           //比例ゲイン(姿勢制御だけ用)
-float kkd = 134;           //微分ゲイン(姿勢制御だけ用)
+float kkd = 131.5;         //微分ゲイン(姿勢制御だけ用)
 unsigned long NowTime;     // D制御で回転時間を出すために
 unsigned long OldTime;     // D制御で回転時間を出すために
 
 int hata = 0;  //プログロムの状態を見たいときに自由に使う（プログラムには必要ない）
 
-int serial = 1; //シリアルモニターを表示させるときはここを0から1にする
+int serial = 0; //シリアルモニターを表示させるときはここを0から1にする
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
@@ -339,10 +336,10 @@ void loop(void)
       };
 
       // Dirの設定
-      DIR20 = DIR0 + 20; // 20゜
-      if (360 < DIR20)
+      DIR5 = DIR0 + 5; // 5゜
+      if (360 < DIR5)
       { //角度が360を超えている数値になってしまったら
-        DIR20 = DIR20 - 360;
+        DIR5 = DIR5 - 360;
       };
       DIR90 = DIR0 + 90; // 90゜
       if (360 < DIR90)
@@ -359,10 +356,10 @@ void loop(void)
       { //角度が360を超えている数値になってしまったら
         DIR270 = DIR270 - 360;
       };
-      DIR340 = DIR0 + 340; // 340°
-      if (360 < DIR340)
+      DIR355 = DIR0 + 355; // 355°
+      if (360 < DIR355)
       { //角度が360を超えている数値になってしまったら
-        DIR340 = DIR340 - 360;
+        DIR355 = DIR355 - 360;
       };
 
       TargetDir = DIR0; //目標角度を真正面方向に設定
@@ -379,8 +376,6 @@ void loop(void)
   }
   else if (aa == 10) //ラインの検出、方位の確認、ボールの値を検出、どこのステートに行くかを決める <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   {
-    digitalWrite(LEDdesu,LOW);
-    //ロボットを速く動かす（ボールを追う、ラインから離れる）時のモーターの設定
     if (analogRead(LINE13) > LineValue) //前にラインがある
     {
       if (Lpast != 13) //前回反応したセンサーがこのセンサーでなければ（同じセンサーでラインを認識してしまうとロボットの動きが見れないから）
@@ -438,7 +433,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -452,8 +446,6 @@ void loop(void)
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
 
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -516,7 +508,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -529,8 +520,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -593,7 +582,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -606,8 +594,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -670,7 +656,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -683,8 +668,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -747,7 +730,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -760,8 +742,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -824,7 +804,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -837,8 +816,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -901,7 +878,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -914,8 +890,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -978,7 +952,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -991,8 +964,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -1055,7 +1026,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -1068,8 +1038,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -1132,7 +1100,6 @@ void loop(void)
           };
 
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
           i = 0; //実行ステートに移動できるようにする
         }
         else
@@ -1145,8 +1112,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -1222,8 +1187,6 @@ void loop(void)
 
           i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
         }
-
-        LINEMtime = KINEMtimeL;
 
         LineResetT = millis();
         LineResetT += 1500; //ラインがあったらタイマースタート
@@ -1374,6 +1337,7 @@ void loop(void)
             }
             else //周りにボールがなかったら
             {
+              g = 1;  //全センサーを見るのをやめて姿勢制御だけに集中するために、1にすることでほかのセンサーを見るaa == 10から抜け出せる
               h = 7; //姿勢制御
             };
           };
@@ -1507,6 +1471,7 @@ void loop(void)
             }
             else //周りにボールがなかったら
             {
+              g = 1;  //全センサーを見るのをやめて姿勢制御だけに集中するために、1にすることでほかのセンサーを見るaa == 10から抜け出せる
               h = 7; //姿勢制御
             };
           }
@@ -1539,33 +1504,16 @@ void loop(void)
       };
     };
 
-    if (i == 0) //ラインが反応してなかったら実行するが、ラインが反応するとある一定の回数ラインを読むまで実行できない
+    if (i == 0) //ラインが反応してなかったら実行するが、ラインが反応するとある一定の回数ラインを読むまで実行できないor時間が経てば解除されて見ることができる
     {
       NowTime = millis(); //下の条件式でエラーが出たので今の時間を変数に代入してから条件を聞くことにした
       //    Serial.print("aa:"); Serial.print(aa);
       //    Serial.print(" a:"); Serial.print(a);
       //    Serial.print(" i:"); Serial.print(i);
       //    Serial.print(" NT:"); Serial.print(NowTime);
-      //    Serial.print(" LT:"); Serial.print(LINEMtime);
       //    Serial.print(" DT:"); Serial.println(DoTime);
       if (DoTime < NowTime)
       {                                                    //一番最初にここに来るときはDoTimeは0だから条件は成立する
-        OldDeviationDir = NewDeviationDir;                 //一個前の偏差値を比較
-        NewDeviationDir = TargetDir - event.orientation.x; //偏差値 = 目標角度（真正面方向） - 今の角度
-        if (NewDeviationDir < -180)
-        { // 180~360
-          NewDeviationDir = NewDeviationDir + 360;
-        }
-        else if (180 <= NewDeviationDir)
-        { // 180°~360°
-          NewDeviationDir = NewDeviationDir - 360;
-        };
-
-        P = NewDeviationDir; // P制御
-        NowTime = millis();
-        D = (OldDeviationDir - NewDeviationDir) / (NowTime - OldTime); // D制御
-        OldTime = NowTime;                                             // D制御の時に回転時間を使いたいため
-
         if(e != 0)  //ボールによって方向が決められていたら
         {
           if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
@@ -1586,10 +1534,52 @@ void loop(void)
           };
         }
 
-        aa = 20; //動作をするステートブロック
         a = h;   //ステートを動かしている時間にステートの行先（ｈ）を決め、そこに行く
+        aa = 20; //動作をするステートブロック
       };
     };
+  }
+  else if(aa == 11)  //姿勢制御しか見ません！！！
+  {
+    //0°から見て±5°の間を向くまで、全センサーを見るステートには行けない
+    if(DIR5 < DIR355)
+    {
+      if(DIR5 >= event.orientation.x || event.orientation.x >= DIR355)  //0°から見て±5°の間を向いていたら
+      {
+        g = 0;  //全センサーを見れるようにする
+        aa = 10;  //もとに戻る
+      }
+    }
+    else
+    {
+      if(DIR355 <= event.orientation.x && event.orientation.x <= DIR5)  //0°から見て±5°の間を向いていたら
+      {
+        g = 0;  //全センサーを見れるようにする
+        aa = 10;  //もとに戻る
+      }
+    }
+    
+    if(DoTime < NowTime)
+    {
+      OldDeviationDir = NewDeviationDir;                 //一個前の偏差値を比較
+      NewDeviationDir = TargetDir - event.orientation.x; //偏差値 = 目標角度（真正面方向） - 今の角度
+      if (NewDeviationDir < -180)
+      { // 180~360
+        NewDeviationDir = NewDeviationDir + 360;
+      }
+      else if (180 <= NewDeviationDir)
+      { // 180°~360°
+        NewDeviationDir = NewDeviationDir - 360;
+      };
+
+      P = NewDeviationDir; // P制御
+      NowTime = millis();
+      D = (OldDeviationDir - NewDeviationDir) / (NowTime - OldTime); // D制御
+      OldTime = NowTime;                                             // D制御の時に回転時間を使いたいため
+
+      a = 7;  //姿勢制御しかないのでこのステートに飛ぶ一択
+      aa = 20;  //動作をするステートブロック
+    }
   }
   else if(aa == 12)  //ラインから離れるときうまく離れられているかの経過を見る
   {
@@ -1598,8 +1588,7 @@ void loop(void)
       if(L_y[0] == 3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE12) > LineValue) //前にラインがある
@@ -1607,8 +1596,7 @@ void loop(void)
       if(L_y[0] == 2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE23) > LineValue) //左にラインがある
@@ -1616,8 +1604,7 @@ void loop(void)
       if(L_x[0] == -3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE22) > LineValue) //左にラインがある
@@ -1625,8 +1612,7 @@ void loop(void)
       if(L_x[0] == -2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE21) > LineValue) //左にラインがある
@@ -1634,8 +1620,7 @@ void loop(void)
       if(L_x[0] == -1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE33) > LineValue) //後ろにラインがある
@@ -1643,8 +1628,7 @@ void loop(void)
       if(L_y[0] == -3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE32) > LineValue) //後ろにラインがある
@@ -1652,8 +1636,7 @@ void loop(void)
       if(L_y[0] == -2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE31) > LineValue) //後ろにラインがある
@@ -1661,8 +1644,7 @@ void loop(void)
       if(L_y[0] == -1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE43) > LineValue) //右にラインがある
@@ -1670,8 +1652,7 @@ void loop(void)
       if(L_x[0] == 3)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE42) > LineValue) //右にラインがある
@@ -1679,8 +1660,7 @@ void loop(void)
       if(L_x[0] == 2)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
     else if (analogRead(LINE41) > LineValue) //右にラインがある
@@ -1688,10 +1668,19 @@ void loop(void)
       if(L_x[0] == 1)  //離れる瞬間にみた、一番最初にみたラインがこのラインセンサーであったら
       {
         NowTime = millis();
-        LineResetT = NowTime + 100;
-        aa = 10;
+        LineResetT = NowTime + 200;
       }
     }
+
+    NowTime = millis();
+    if (LineResetT < NowTime)  //ようわからんけどラインから離れる動作をする時間が経ったら、もう強制的に全センサーを見るサブステートに行く
+    {
+      i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
+      e = 0;  //これが1だとラインが反応して動いていると考えてずっとラインから離れようとしてしまう
+      Lnum = 0;  //ラインの回数をリセット
+      Lpast = 0; //次にラインを見るときにリセットするため
+      aa = 10;  //全センサー
+    };
   }
   else if (aa == 15)
   { //最終的に動作をするところ
@@ -1814,7 +1803,14 @@ void loop(void)
 
     if(e == 0)  //ボールによって進行方向が決められていたら
     {
-      aa = 10;  //全センサーの動きを見る
+      if(g == 0)  //前回ちゃんと全センサーのどれかが反応していたら基本のサブステートに行く
+      {
+        aa = 10;  //全センサーの動きを見る
+      }
+      else  //全センサーに反応がなく、方位が前を向いていないと検知したら
+      {
+        aa = 11;  //姿勢制御だけしか見ない
+      }
     }
     else  //ラインによって進行方向が決められていたら
     {
@@ -1828,7 +1824,7 @@ void loop(void)
       if (a != b) //初期化
       {
         NowTime = millis();
-        DoTime = NowTime + 100; // 100秒
+        DoTime = NowTime + 100; // 100ms
         b = a;
       };
 
@@ -2018,46 +2014,37 @@ void loop(void)
   {
     // Serial.print("  :"); Serial.print();        (コピー用)
     // Serial.print("x:"); Serial.print(event.orientation.x);
-    // Serial.print("  DIR20:"); Serial.print(DIR20);
+    // Serial.print("  DIR5:"); Serial.print(DIR5);
     // Serial.print("  DIR90:"); Serial.print(DIR90);
     // Serial.print("  DIR180:"); Serial.print(DIR180);
     // Serial.print("  DIR270:"); Serial.print(DIR270);
-    // Serial.print("  DIR340:"); Serial.print(DIR340);
-    Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
+    // Serial.print("  DIR355:"); Serial.print(DIR355);
+    // Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
     // Serial.print("  LINE13:"); Serial.print(LINE13);
-    // Serial.print("  LINEMtime:"); Serial.print(LINEMtime);
     // Serial.print("  MPlast1:"); Serial.print(MPlast1);
     // Serial.print("  M1:"); Serial.print(Motor1);
     // Serial.print("  M2:"); Serial.print(Motor2);
     // Serial.print("  M3:"); Serial.print(Motor3);
     // Serial.print("  M4:"); Serial.print(Motor4);
-    Serial.print("  NowTime:"); Serial.print(NowTime);
-    Serial.print("  DoTime:"); Serial.print(DoTime);
+    // Serial.print("  NowTime:"); Serial.print(NowTime);
+    // Serial.print("  DoTime:"); Serial.print(DoTime);
     // Serial.print("  BAtack1"); Serial.print(BAtack1);
     // Serial.print("  h:"); Serial.print(h);
-    Serial.print("  i:"); Serial.print(i);
+    // Serial.print("  i:"); Serial.print(i);
     // Serial.print("  Lpast:"); Serial.print(Lpast);
     // Serial.print("  hata:"); Serial.print(hata);
-    // Serial.print("  b:"); Serial.print(b);
     Serial.print("  L_x[0]:"); Serial.print(L_x[0]);
     Serial.print("  L_y[0]:"); Serial.print(L_y[0]);
     Serial.print("  L_x[1]:"); Serial.print(L_x[1]);
     Serial.print("  L_y[1]:"); Serial.print(L_y[1]);
     // Serial.print("  c"); Serial.print(c);
-    // Serial.print("  j:"); Serial.print(j);
-    Serial.print("  GoDir:"); Serial.print(GoDir);
+    // Serial.print("  GoDir:"); Serial.print(GoDir);
     // Serial.print("  BValue:"); Serial.print(BValue);
     // Serial.print("  BAngle:"); Serial.print(BAngle);
+    Serial.print("  Lnum:"); Serial.print(Lnum);
+    Serial.print("  g:"); Serial.print(g);
     Serial.print("  aa:"); Serial.print(aa);
+    Serial.print("  b:"); Serial.print(b);
     Serial.print("  a:");Serial.println(a);
-  };
-
-  NowTime = millis();
-  if (LineResetT < NowTime)
-  {
-    e = 0;  //これが1だとラインが反応して動いていると考えてずっとラインから離れようとしてしまう
-    Lnum = 0;  //ラインの回数をリセット
-    i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
-    aa = 10;  //ラインを見てから少し時間が経ちすぎたので全センサーを見るようにする
   };
 };
