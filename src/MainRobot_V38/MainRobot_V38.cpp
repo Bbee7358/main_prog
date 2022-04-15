@@ -432,8 +432,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -448,7 +465,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE12) > LineValue) //前にラインがある
@@ -507,8 +524,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート//進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
         else
         {
@@ -522,7 +556,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE23) > LineValue) //左にラインがある
@@ -581,8 +615,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -596,7 +647,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE22) > LineValue) //左にラインがある
@@ -655,8 +706,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -670,7 +738,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE21) > LineValue) //左にラインがある
@@ -729,8 +797,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -744,7 +829,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE33) > LineValue) //後ろにラインがある
@@ -762,7 +847,7 @@ void loop(void)
           {
             if (L_y[0] > L_y[1]) //上側にロボットが進んでいたら
             {
-              GoDir = 180; //下側に進むようにする              
+              GoDir = 180; //下側に進むようにする           
             }
             else //下側にロボットが進んでいたら
             {
@@ -803,8 +888,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -818,7 +920,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE32) > LineValue) //後ろにラインがある
@@ -877,8 +979,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -892,7 +1011,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE31) > LineValue) //後ろにラインがある
@@ -951,8 +1070,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -966,7 +1102,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE43) > LineValue) //右にラインがある
@@ -1025,8 +1161,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -1040,7 +1193,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE42) > LineValue) //右にラインがある
@@ -1099,8 +1252,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -1114,7 +1284,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else if (analogRead(LINE41) > LineValue) //右にラインがある
@@ -1173,9 +1343,25 @@ void loop(void)
             };
           };
 
+          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+          {
+            a = 50; //右側前進
+          }
+          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+          {
+            a = 60; //右側後進
+          }
+          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+          {
+            a = 70; //左側前進
+          }
+          else //ボールが-90°~-180°の方向にあったら
+          {
+            a = 80; //左側後進
+          };
+
           e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
-          Lnum = 0;  //ラインの回数をリセット
-          i = 0; //実行ステートに移動できるようにする
+          aa = 20;  //動作ステート
         }
         else
         {
@@ -1189,7 +1375,7 @@ void loop(void)
         }
 
         LineResetT = millis();
-        LineResetT += 1500; //ラインがあったらタイマースタート
+        LineResetT += 300; //ラインがあったらタイマースタート
       }
     }
     else //ラインが反応していなかったら
@@ -1514,26 +1700,6 @@ void loop(void)
       //    Serial.print(" DT:"); Serial.println(DoTime);
       if (DoTime < NowTime)
       {                                                    //一番最初にここに来るときはDoTimeは0だから条件は成立する
-        if(e != 0)  //ボールによって方向が決められていたら
-        {
-          if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
-          {
-            h = 50; //右側前進
-          }
-          else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
-          {
-            h = 60; //右側後進
-          }
-          else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
-          {
-            h = 70; //左側前進
-          }
-          else //ボールが-90°~-180°の方向にあったら
-          {
-            h = 80; //左側後進
-          };
-        }
-
         a = h;   //ステートを動かしている時間にステートの行先（ｈ）を決め、そこに行く
         aa = 20; //動作をするステートブロック
       };
@@ -1558,7 +1724,7 @@ void loop(void)
         aa = 10;  //もとに戻る
       }
     }
-    
+    NowTime = millis();
     if(DoTime < NowTime)
     {
       OldDeviationDir = NewDeviationDir;                 //一個前の偏差値を比較
@@ -1577,7 +1743,8 @@ void loop(void)
       D = (OldDeviationDir - NewDeviationDir) / (NowTime - OldTime); // D制御
       OldTime = NowTime;                                             // D制御の時に回転時間を使いたいため
 
-      a = 7;  //姿勢制御しかないのでこのステートに飛ぶ一択
+      a = 7;  //
+      g = 0;  //全センサーを見れるようにする
       aa = 20;  //動作をするステートブロック
     }
   }
@@ -1671,16 +1838,6 @@ void loop(void)
         LineResetT = NowTime + 200;
       }
     }
-
-    NowTime = millis();
-    if (LineResetT < NowTime)  //ようわからんけどラインから離れる動作をする時間が経ったら、もう強制的に全センサーを見るサブステートに行く
-    {
-      i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
-      e = 0;  //これが1だとラインが反応して動いていると考えてずっとラインから離れようとしてしまう
-      Lnum = 0;  //ラインの回数をリセット
-      Lpast = 0; //次にラインを見るときにリセットするため
-      aa = 10;  //全センサー
-    };
   }
   else if (aa == 15)
   { //最終的に動作をするところ
@@ -1689,7 +1846,7 @@ void loop(void)
     {
       digitalWrite(INA1, HIGH);
       digitalWrite(INB1, LOW); //正転
-      m = 0;                   //変換していないというフラグ
+      m = 0;//変換していないというフラグ
     }
     else
     {
@@ -1957,7 +2114,7 @@ void loop(void)
 
       aa = 15; //動作を決める
     }
-    else if (a == 60) // 90°~180°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    else if (a == 60) //90°~180°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
       {
@@ -1974,7 +2131,7 @@ void loop(void)
 
       aa = 15; //動作を決める
     }
-    else if (a == 70) // 0°~-90°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    else if (a == 70) //0°~-90°の方向に行きたいとき~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       if (a != b) //初期化
       {
@@ -2013,7 +2170,8 @@ void loop(void)
   if (serial != 0) // 0ではなく1だったら、シリアルモニターを表示
   {
     // Serial.print("  :"); Serial.print();        (コピー用)
-    // Serial.print("x:"); Serial.print(event.orientation.x);
+    Serial.print("x:"); Serial.print(event.orientation.x);
+    // Serial.print("  DIR0:"); Serial.print(DIR0);
     // Serial.print("  DIR5:"); Serial.print(DIR5);
     // Serial.print("  DIR90:"); Serial.print(DIR90);
     // Serial.print("  DIR180:"); Serial.print(DIR180);
@@ -2022,10 +2180,10 @@ void loop(void)
     // Serial.print("  switch:"); Serial.print(digitalRead(SWICH));
     // Serial.print("  LINE13:"); Serial.print(LINE13);
     // Serial.print("  MPlast1:"); Serial.print(MPlast1);
-    // Serial.print("  M1:"); Serial.print(Motor1);
-    // Serial.print("  M2:"); Serial.print(Motor2);
-    // Serial.print("  M3:"); Serial.print(Motor3);
-    // Serial.print("  M4:"); Serial.print(Motor4);
+    Serial.print("  M1:"); Serial.print(Motor1);
+    Serial.print("  M2:"); Serial.print(Motor2);
+    Serial.print("  M3:"); Serial.print(Motor3);
+    Serial.print("  M4:"); Serial.print(Motor4);
     // Serial.print("  NowTime:"); Serial.print(NowTime);
     // Serial.print("  DoTime:"); Serial.print(DoTime);
     // Serial.print("  BAtack1"); Serial.print(BAtack1);
@@ -2033,18 +2191,111 @@ void loop(void)
     // Serial.print("  i:"); Serial.print(i);
     // Serial.print("  Lpast:"); Serial.print(Lpast);
     // Serial.print("  hata:"); Serial.print(hata);
-    Serial.print("  L_x[0]:"); Serial.print(L_x[0]);
-    Serial.print("  L_y[0]:"); Serial.print(L_y[0]);
-    Serial.print("  L_x[1]:"); Serial.print(L_x[1]);
-    Serial.print("  L_y[1]:"); Serial.print(L_y[1]);
+    // Serial.print("  L_x[0]:"); Serial.print(L_x[0]);
+    // Serial.print("  L_y[0]:"); Serial.print(L_y[0]);
+    // Serial.print("  L_x[1]:"); Serial.print(L_x[1]);
+    // Serial.print("  L_y[1]:"); Serial.print(L_y[1]);
     // Serial.print("  c"); Serial.print(c);
-    // Serial.print("  GoDir:"); Serial.print(GoDir);
+    Serial.print("  GoDir:"); Serial.print(GoDir);
     // Serial.print("  BValue:"); Serial.print(BValue);
     // Serial.print("  BAngle:"); Serial.print(BAngle);
+    Serial.print("  i:"); Serial.print(i);
+    Serial.print("  e:"); Serial.print(e);
     Serial.print("  Lnum:"); Serial.print(Lnum);
     Serial.print("  g:"); Serial.print(g);
     Serial.print("  aa:"); Serial.print(aa);
     Serial.print("  b:"); Serial.print(b);
     Serial.print("  a:");Serial.println(a);
   };
+
+  if(i == 1)  //ラインを見ていてほかのセンサーを見れないときは
+  {
+    NowTime = millis();
+    if (LineResetT < NowTime)  //ようわからんけどラインから離れる動作をする時間が経ったら、もう強制的に全センサーを見るサブステートに行く
+    {
+      i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
+      e = 0;  //これが1だとラインが反応して動いていると考えてずっとラインから離れようとしてしまう
+      Lnum = 0;  //ラインの回数をリセット
+      Lpast = 0; //次にラインを見るときにリセットするため
+      if(aa == 12)
+      {
+        aa = 10;  //全センサーを見る
+      }
+      else
+      {
+        //ラインの反応からロボットの動いた方向を分析
+        if (L_x[0] == 0 && L_x[1] == 0) // x軸には変化がなかったら
+        {
+          if (L_y[0] > L_y[1]) //上側にロボットが進んでいたら
+          {
+            GoDir = 180; //下側に進むようにする              
+          }
+          else //下側にロボットが進んでいたら
+          {
+            GoDir = 0; //上側に進むようにする
+          }
+        }
+        else
+        {
+          if (L_x[0] == 0) //x軸は0だったら（左右にラインがあったら）
+          {
+            if (L_y[0] > 0) //前側にラインがあったら
+            {
+              GoDir = 180; //後進           
+            }
+            else //後ろ側にラインがあったら
+            {
+              GoDir = 0; //前進
+            };
+          }
+          else
+          {
+            if (L_x[0] > 0)  //右側にラインがあったら
+            {
+              GoDir = 270;  //左進
+            }
+            else  //左側にラインがあったら
+            {
+              GoDir = 90;  //右進
+            };
+          };
+        };
+
+        if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+        {
+          a = 50; //右側前進
+        }
+        else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+        {
+          a = 60; //右側後進
+        }
+        else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+        {
+          a = 70; //左側前進
+        }
+        else //ボールが-90°~-180°の方向にあったら
+        {
+          a = 80; //左側後進
+        };
+      };
+
+      OldDeviationDir = NewDeviationDir;                 //一個前の偏差値を比較
+      NewDeviationDir = TargetDir - event.orientation.x; //偏差値 = 目標角度（真正面方向） - 今の角度
+      if (NewDeviationDir < -180)
+      { // 180~360
+        NewDeviationDir = NewDeviationDir + 360;
+      }
+      else if (180 <= NewDeviationDir)
+      { // 180°~360°
+        NewDeviationDir = NewDeviationDir - 360;
+      };
+
+      P = NewDeviationDir; // P制御
+      NowTime = millis();
+      D = (OldDeviationDir - NewDeviationDir) / (NowTime - OldTime); // D制御
+      OldTime = NowTime;
+
+      aa = 20;  //動作をするステートブロック
+    };
+  }
 };
