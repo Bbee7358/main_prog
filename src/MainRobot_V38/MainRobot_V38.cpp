@@ -88,12 +88,12 @@ uint8_t ir_8bit[17]; //ボールのデジタルがレジスタで入る
 int ir_digital[17];  //ボールのデジタル値の逆の値が入る
 int L = 1000;        //ボールの値を数える回数
 float BAngle = 0;    //ボールの角度
-int BValue = 0;      // eはint型初期値は0（ボールセンサ値）
+float BValue = 0;      // 
 
 //モーター比
 float MotorR1 = 1;   //右前
 float MotorR2 = 1;   //左前
-float MotorR3 = 0.8; //左後ろ
+float MotorR3 = 0.7; //左後ろ
 float MotorR4 = 0.8; //右後ろ
 
 //モーター出力
@@ -103,13 +103,16 @@ int Motor3;
 int Motor4;
 
 //モーターパワー
+float MPOWER10 = 2;
+float MPOWER9 = 1.9;
+float MPOWER7 = 1.7;
 float MPOWER6 = 1.6;
 float MPOWER5 = 1.5;
 float MPOWER4 = 1.4;
 float MPOWER3 = 1.2;
-
+float MPOWER;  //パワーの値を入れる定数
 //ラインの境目（コートによってこの値をいじる）
-int LineValue = 300;
+int LineValue = 400;
 
 // Dirの値を記録
 int DIR0;   // 0°
@@ -222,6 +225,7 @@ void setup(void)
 
 void loop(void)
 {
+  hata = 0;
   /* Get a new sensor event */
   sensors_event_t event; // eventという定義
 
@@ -232,6 +236,7 @@ void loop(void)
     digitalWrite(LEDdesu,HIGH);
     if (a == 0) //ステート0 キャリブレーション スイッチが押されてない時に押されるまで待つ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
+      MPOWER = MPOWER10;  //ここのパワーを変えることによってロボットの速さを変更できる
       if (a != b) //初期化
       {
         b = a;
@@ -407,21 +412,22 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -448,15 +454,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 180;  //ラインから離れるために後進しろ
+          h = 60;  //右側後進
           //ラインセンサの座標を設定
           L_x[Lnum] = 0;
           L_y[Lnum] = 3;
           Lnum += 1;  //回数を数える
           Lpast = 13; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -497,21 +506,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -538,15 +547,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 180;  //ラインから離れるために後進しろ
+          h = 60;  //右側後進
           //ラインセンサの座標を設定
           L_x[Lnum] = 0;
           L_y[Lnum] = 2;
           Lnum += 1;  //回数を数える
           Lpast = 12; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -587,21 +599,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -628,15 +640,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 90;  //ラインから離れるために右進しろ
+          h = 60;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = -3;
           L_y[Lnum] = 0;
           Lnum += 1;  //回数を数える
           Lpast = 23; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -677,21 +692,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -718,15 +733,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 90;  //ラインから離れるために右進しろ
+          h = 60;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = -2;
           L_y[Lnum] = 0;
           Lnum += 1;  //回数を数える
           Lpast = 22; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -767,21 +785,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -808,15 +826,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 90;  //ラインから離れるために右進しろ
+          h = 60;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = -1;
           L_y[Lnum] = 0;
           Lnum += 1;  //回数を数える
           Lpast = 21; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -857,21 +878,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -898,15 +919,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 0;  //ラインから離れるために前進しろ
+          h = 50;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = 0;
           L_y[Lnum] = -3;
           Lnum += 1;  //回数を数える
           Lpast = 33; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -947,21 +971,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -988,15 +1012,19 @@ void loop(void)
         }
         else
         {
+          GoDir = 0;  //ラインから離れるために前進しろ
+          h = 50;  //右側前進
+
           //ラインセンサの座標を設定
           L_x[Lnum] = 0;
           L_y[Lnum] = -2;
           Lnum += 1;  //回数を数える
           Lpast = 32; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -1037,21 +1065,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -1078,15 +1106,18 @@ void loop(void)
         }
         else
         {
+          GoDir = 0;  //ラインから離れるために前進しろ
+          h = 50;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = 0;
           L_y[Lnum] = -1;
           Lnum += 1;  //回数を数える
           Lpast = 31; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -1118,7 +1149,7 @@ void loop(void)
             {
               if (L_x[0] > L_x[1]) //右側にロボットが進んでいたら
               {
-                GoDir = -90; //左側に進むようにする                
+                GoDir = -90; //左側に進むようにする
               }
               else //左側にロボットが進んでいたら
               {
@@ -1127,21 +1158,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -1168,15 +1199,18 @@ void loop(void)
         }
         else
         {
+          GoDir = -90;  //ラインから離れるために左進しろ
+          h = 70;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = 3;
           L_y[Lnum] = 0;
           Lnum += 1;  //回数を数える
           Lpast = 43; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる]
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -1217,21 +1251,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -1258,15 +1292,18 @@ void loop(void)
         }
         else
         {
+          GoDir = -90;  //ラインから離れるために左進しろ
+          h = 70;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = 2;
           L_y[Lnum] = 0;
           Lnum += 1;  //回数を数える
           Lpast = 42; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
@@ -1307,21 +1344,21 @@ void loop(void)
             }
             else
             {
-              if (L_x[0] > L_x[1] && L_y[0] > L_y[1]) //右斜め前に動いていたら
+              if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
               {
-                GoDir = -135; //左斜め後進
+                GoDir = 135;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //右斜め後ろに動いていたら
+              else if (L_x[0] < L_x[1] && L_y[0] < L_y[1]) //左斜め後ろに動いていたら
               {
-                GoDir = -45; //左斜め前進
+                GoDir = 45;
               }
-              else if (L_x[0] < L_x[1] && L_y[0] > L_y[1]) //左斜め前に動いていたら
+              else if (L_x[0] > L_x[1] && L_y[0] < L_y[1]) //右斜め後ろに動いていたら
               {
-                GoDir = 135; //右斜め後進
+                GoDir = -45;
               }
-              else //左斜め後ろに動いていたら
+              else //左斜め前に動いていたら
               {
-                GoDir = 45; //右斜め前進
+                GoDir = 135;
               };
             };
           };
@@ -1348,21 +1385,23 @@ void loop(void)
         }
         else
         {
+          GoDir = -90;  //ラインから離れるために左進しろ
+          h = 70;  //右側前進
           //ラインセンサの座標を設定
           L_x[Lnum] = 1;
           L_y[Lnum] = 0;
           Lnum += 1;  //回数を数える
           Lpast = 41; // 2回目以降にこのセンサを見ないようにするため
 
-          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
           LineResetT = millis();
           LineResetT += 300; //もしかしたらラインが一回目だけしか反応しなかった可能性もあるのである程度の時間が経てば反応したラインの位置においてラインから離れる
+          i = 1; //ラインセンサーが反応したので次の行動をラインから離れるという行動にしたいので、センサーをチェックするのをやめる
+          e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
         }
       }
     }
     else //ラインが反応していなかったら
     {
-      hata = 1;
       if (e == 0) //ラインが動作するステートにいるときに反応していなかったら
       {
         if (DIR90 < DIR270) //-------------------------------------------------------------------------------------  問題
@@ -1454,47 +1493,54 @@ void loop(void)
 
             if (BValue >= 400) //一番高いセンサーが、ある一定の反応をしていたら
             {
-              e = 0;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
               if (16 <= c || c <= 2) //前のボールセンサがボールを見ていたら
               {
-                if (-90 <= BAngle && BAngle < 0) //ボールが-90°~0°の方向にあったら→左側前進
+                if (0 > BAngle && BAngle > -90) //ボールが-90°~0°の方向にあったら→左側前進
                 {
-                  GoDir = BAngle; //進む方向を決める（今回はボールに向かって進みたいから進行方向はボールの方向）
+                  hata = 1;
+                  GoDir = -2.00/5.00 * BValue + 200 + BAngle; //進む方向を決める（ボールに近づくにつれて前進する角度を垂直に近づける）
                 }
-                else if (0 <= BAngle && BAngle < 90) //ボールが0°~90°の方向にあったら→右側前進
+                else if(BAngle == 0)  //ボールが0°にあったら
                 {
-                  GoDir = BAngle; //進む方向を決める（今回はボールに向かって進みたいから進行方向はボールの方向）
+                  hata = 2;
+                  GoDir = BAngle;  //進む方向を決める（今回はボールに向かって進みたいから進行方向はボールの方向）
+                }
+                else if (0 < BAngle && BAngle < 90) //ボールが0°~90°の方向にあったら→右側前進
+                {
+                  hata = 3;
+                  GoDir = 2.00/5.00 * BValue - 200 + BAngle; //進む方向を決める（ボールに近づくにつれて前進する角度を垂直に近づける）
                 }
               }
               else //ボールが回り込まなければいけないとこにあったら
               {
-                if (BAngle > 0) //右側にボールがあったら
+                if (BAngle >= 0) //右側にボールがあったら
                 {
-                  GoDir = BAngle + 3 * BValue / 5 - 300;
+                  GoDir = BAngle + 9 * BValue / 10 - 450;
                 }
                 else
                 {
-                  GoDir = BAngle - 3 * BValue / 5 + 300;
-                }
-                if (GoDir > 180) // 180°以降の数字は本来-となるべきなので左側仕様のマイナスにしなければならない
-                {
-                  GoDir = -360 + GoDir;
-                }
-                else if (GoDir < -180) //-180°以降の数字は本来+となるべきなので右側仕様のプラスにしなければならない
-                {
-                  GoDir = 360 + GoDir;
+                  GoDir = BAngle - 9 * BValue / 10 + 450;;
                 }
               };
 
-              if (0 <= GoDir && GoDir < 90) //ボールが-180°~-90°の方向にあったら
+              if (GoDir > 180) // 180°以降の数字は本来-となるべきなので左側仕様のマイナスにしなければならない
+              {
+                GoDir = -360 + GoDir;
+              }
+              else if (GoDir <= -180) //-180°以降の数字は本来+となるべきなので右側仕様のプラスにしなければならない
+              {
+                GoDir = 360 + GoDir;
+              }
+
+              if (0 <= GoDir && GoDir < 90) //ボールが0°~90°の方向にあったら
               {
                 h = 10; //右側前進
               }
-              else if (90 <= GoDir && GoDir <= 180) //ボールが-90°~0°の方向にあったら
+              else if (90 <= GoDir && GoDir <= 180) //ボールが180°~90°の方向にあったら
               {
                 h = 20; //右側後進
               }
-              else if (0 > GoDir && GoDir >= -90) //ボールが0°~90°の方向にあったら
+              else if (0 > GoDir && GoDir >= -90) //ボールが-90°~0°の方向にあったら
               {
                 h = 30; //左側前進
               }
@@ -1589,34 +1635,40 @@ void loop(void)
 
             if (BValue >= 400) //一番高いセンサーが、ある一定の反応をしていたら
             {
-              e = 0;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
               if (16 <= c || c <= 2) //前のボールセンサがボールを見ていたら
               {
-                if (-90 <= BAngle && BAngle < 0) //ボールが-90°~0°の方向にあったら→左側前進
+                if (0 > BAngle && BAngle > -90) //ボールが-90°~0°の方向にあったら→左側前進
                 {
-                  GoDir = BAngle; //進む方向を決める（今回はボールに向かって進みたいから進行方向はボールの方向）
+                  hata = 1;
+                  GoDir = -2.00/5.00 * BValue + 200 + BAngle; //進む方向を決める（ボールに近づくにつれて前進する角度を垂直に近づける）
                 }
-                else if (0 <= BAngle && BAngle < 90) //ボールが0°~90°の方向にあったら→右側前進
+                else if(BAngle == 0)  //ボールが0°にあったら
                 {
-                  GoDir = BAngle; //進む方向を決める（今回はボールに向かって進みたいから進行方向はボールの方向）
+                  hata = 2;
+                  GoDir = BAngle;  //進む方向を決める（今回はボールに向かって進みたいから進行方向はボールの方向）
+                }
+                else if (0 < BAngle && BAngle < 90) //ボールが0°~90°の方向にあったら→右側前進
+                {
+                  hata = 3;
+                  GoDir = 2.00/5.00 * BValue - 200 + BAngle; //進む方向を決める（ボールに近づくにつれて前進する角度を垂直に近づける）
                 }
               }
               else //ボールが回り込まなければいけないとこにあったら
               {
-                if (BAngle > 0) //右側にボールがあったら
+                if (BAngle >= 0) //右側にボールがあったら
                 {
-                  GoDir = BAngle + 3 * BValue / 5 - 300;
+                  GoDir = BAngle + 9 * BValue / 10 - 450;
                 }
                 else
                 {
-                  GoDir = BAngle - 3 * BValue / 5 + 300;
+                  GoDir = BAngle - 9 * BValue / 10 + 450;;
                 }
                 
                 if (GoDir > 180) // 180°以降の数字は本来-となるべきなので左側仕様のマイナスにしなければならない
                 {
                   GoDir = -360 + GoDir;
                 }
-                else if (GoDir < -180) //-180°以降の数字は本来+となるべきなので右側仕様のプラスにしなければならない
+                else if (GoDir <= -180) //-180°以降の数字は本来+となるべきなので右側仕様のプラスにしなければならない
                 {
                   GoDir = 360 + GoDir;
                 }
@@ -1768,7 +1820,6 @@ void loop(void)
       PDsiki = Kp*P - Kd*D;  //PDの結果はモーターによって変わらないので一個にまとめる
 
       a = 7;  //
-      g = 0;  //全センサーを見れるようにする
       aa = 20;  //動作をするステートブロック
     }
   }
@@ -1780,6 +1831,7 @@ void loop(void)
       {
         NowTime = millis();
         DoTime = NowTime + 200;  //時間を上乗せして確実にラインから離れる
+        LineResetT = NowTime + 100000;  //ラインから離れる動作をしているときにリセットされるのを防ぐため
       };
     }
     else if(L_x[0] < 0)  //左側のラインブロックが一回目にラインを見たとき
@@ -1788,6 +1840,7 @@ void loop(void)
       {
         NowTime = millis();
         DoTime = NowTime + 200;
+        LineResetT = NowTime + 100000;  //ラインから離れる動作をしているときにリセットされるのを防ぐため
       };
     }
     else if(L_y[0] < 0)  //後ろ側のラインブロックが一回目にラインを見たとき
@@ -1796,6 +1849,7 @@ void loop(void)
       {
         NowTime = millis();
         DoTime = NowTime + 200;
+        LineResetT = NowTime + 100000;  //ラインから離れる動作をしているときにリセットされるのを防ぐため
       };
     }
     else if(L_x[0] > 0)  //右側のラインブロックが一回目にラインを見たとき
@@ -1804,6 +1858,7 @@ void loop(void)
       {
         NowTime = millis();
         DoTime = NowTime + 200;
+        LineResetT = NowTime + 100000;  //ラインから離れる動作をしているときにリセットされるのを防ぐため
       };
     };
 
@@ -2017,10 +2072,10 @@ void loop(void)
       NowTime = millis();
       DoTime = NowTime + 100; // 100秒
 
-      Motor1 = (20 / 9 * GoDir - 100) * MPOWER5 * MotorR1 + PDsiki;  //右前
-      Motor2 = 100 * MPOWER5 * MotorR2 + PDsiki;                     //左前
-      Motor3 = (-20 / 9 * GoDir + 100) * MPOWER5 * MotorR3 + PDsiki; //左後ろ
-      Motor4 = -100 * MPOWER5 * MotorR4 + PDsiki;                    //右後ろ
+      Motor1 = (20 / 9 * GoDir - 100) * MPOWER * MotorR1 + PDsiki;  //右前
+      Motor2 = 100 * MPOWER * MotorR2 + PDsiki;                     //左前
+      Motor3 = (-20 / 9 * GoDir + 100) * MPOWER * MotorR3 + PDsiki; //左後ろ
+      Motor4 = -100 * MPOWER * MotorR4 + PDsiki;                    //右後ろ
 
       aa = 15; //動作を決める
     }
@@ -2034,10 +2089,10 @@ void loop(void)
       NowTime = millis();
       DoTime = NowTime + 100;
 
-      Motor1 = 100 * MPOWER5 * MotorR1 + PDsiki;                     //右前
-      Motor2 = (-20 / 9 * GoDir + 300) * MPOWER5 * MotorR1 + PDsiki; //左前
-      Motor3 = -100 * MPOWER5 * MotorR1 + PDsiki;                    //左後ろ
-      Motor4 = (20 / 9 * GoDir - 300) * MPOWER5 * MotorR1 + PDsiki;  //右後ろ
+      Motor1 = 100 * MPOWER * MotorR1 + PDsiki;                     //右前
+      Motor2 = (-20 / 9 * GoDir + 300) * MPOWER * MotorR2 + PDsiki; //左前
+      Motor3 = -100 * MPOWER * MotorR3 + PDsiki;                    //左後ろ
+      Motor4 = (20 / 9 * GoDir - 300) * MPOWER * MotorR4 + PDsiki;  //右後ろ
 
       aa = 15; //動作を決める
     }
@@ -2051,10 +2106,10 @@ void loop(void)
       NowTime = millis();
       DoTime = NowTime + 100; // 100秒
 
-      Motor1 = -100 * MPOWER5 * MotorR1 + PDsiki;                    //右前
-      Motor2 = (20 / 9 * GoDir + 100) * MPOWER5 * MotorR2 + PDsiki;  //左前
-      Motor3 = 100 * MPOWER5 * MotorR3 + PDsiki;                     //左後ろ
-      Motor4 = (-20 / 9 * GoDir - 100) * MPOWER5 * MotorR4 + PDsiki; //右後ろ
+      Motor1 = -100 * MPOWER * MotorR1 + PDsiki;                    //右前
+      Motor2 = (20 / 9 * GoDir + 100) * MPOWER * MotorR2 + PDsiki;  //左前
+      Motor3 = 100 * MPOWER * MotorR3 + PDsiki;                     //左後ろ
+      Motor4 = (-20 / 9 * GoDir - 100) * MPOWER * MotorR4 + PDsiki; //右後ろ
 
       aa = 15; //動作を決める
     }
@@ -2068,10 +2123,10 @@ void loop(void)
       NowTime = millis();
       DoTime = NowTime + 100; // 100秒
 
-      Motor1 = (-20 / 9 * GoDir - 300) * MPOWER5 * MotorR1 + PDsiki;
-      Motor2 = -100 * MPOWER5 * MotorR1 + PDsiki;
-      Motor3 = (20 / 9 * GoDir + 300) * MPOWER5 * MotorR1 + PDsiki;
-      Motor4 = 100 * MPOWER5 * MotorR1 + PDsiki;
+      Motor1 = (-20 / 9 * GoDir - 300) * MPOWER * MotorR1 + PDsiki;
+      Motor2 = -100 * MPOWER * MotorR2 + PDsiki;
+      Motor3 = (20 / 9 * GoDir + 300) * MPOWER * MotorR3 + PDsiki;
+      Motor4 = 100 * MPOWER * MotorR4 + PDsiki;
 
       aa = 15; //動作を決める
     }
@@ -2083,12 +2138,12 @@ void loop(void)
       };
 
       NowTime = millis();
-      DoTime = NowTime + 300;
+      DoTime = NowTime + 500;
 
-      Motor1 = (20 / 9 * GoDir - 100) * MPOWER5 * MotorR1 + PDsiki;  //右前
-      Motor2 = 100 * MPOWER5 * MotorR2 + PDsiki;                     //左前
-      Motor3 = (-20 / 9 * GoDir + 100) * MPOWER5 * MotorR3 + PDsiki; //左後ろ
-      Motor4 = -100 * MPOWER5 * MotorR4 + PDsiki;                    //右後ろ
+      Motor1 = (20 / 9 * GoDir - 100) * MPOWER * MotorR1 + PDsiki;  //右前
+      Motor2 = 100 * MPOWER * MotorR2 + PDsiki;                     //左前
+      Motor3 = (-20 / 9 * GoDir + 100) * MPOWER * MotorR3 + PDsiki; //左後ろ
+      Motor4 = -100 * MPOWER * MotorR4 + PDsiki;                    //右後ろ
 
       aa = 15; //動作を決める
     }
@@ -2100,12 +2155,12 @@ void loop(void)
       };
 
       NowTime = millis();
-      DoTime = NowTime + 300;
+      DoTime = NowTime + 500;
 
-      Motor1 = 100 * MPOWER5 * MotorR1 + PDsiki;                     //右前
-      Motor2 = (-20 / 9 * GoDir + 300) * MPOWER5 * MotorR1 + PDsiki; //左前
-      Motor3 = -100 * MPOWER5 * MotorR1 + PDsiki;                    //左後ろ
-      Motor4 = (20 / 9 * GoDir - 300) * MPOWER5 * MotorR1 + PDsiki;  //右後ろ
+      Motor1 = 100 * MPOWER * MotorR1 + PDsiki;                     //右前
+      Motor2 = (-20 / 9 * GoDir + 300) * MPOWER * MotorR2 + PDsiki; //左前
+      Motor3 = -100 * MPOWER * MotorR3 + PDsiki;                    //左後ろ
+      Motor4 = (20 / 9 * GoDir - 300) * MPOWER * MotorR4 + PDsiki;  //右後ろ
 
       aa = 15; //動作を決める
     }
@@ -2117,12 +2172,12 @@ void loop(void)
       };
 
       NowTime = millis();
-      DoTime = NowTime + 300;
+      DoTime = NowTime + 500;
 
-      Motor1 = -100 * MPOWER5 * MotorR1 + PDsiki;                    //右前
-      Motor2 = (20 / 9 * GoDir + 100) * MPOWER5 * MotorR2 + PDsiki;  //左前
-      Motor3 = 100 * MPOWER5 * MotorR3 + PDsiki;                     //左後ろ
-      Motor4 = (-20 / 9 * GoDir - 100) * MPOWER5 * MotorR4 + PDsiki; //右後ろ
+      Motor1 = -100 * MPOWER * MotorR1 + PDsiki;                    //右前
+      Motor2 = (20 / 9 * GoDir + 100) * MPOWER * MotorR2 + PDsiki;  //左前
+      Motor3 = 100 * MPOWER * MotorR3 + PDsiki;                     //左後ろ
+      Motor4 = (-20 / 9 * GoDir - 100) * MPOWER * MotorR4 + PDsiki; //右後ろ
 
       aa = 15; //動作を決める
     }
@@ -2134,12 +2189,12 @@ void loop(void)
       };
 
       NowTime = millis();
-      DoTime = NowTime + 300;
+      DoTime = NowTime + 500;
 
-      Motor1 = (-20 / 9 * GoDir - 300) * MPOWER5 * MotorR1 + PDsiki;
-      Motor2 = -100 * MPOWER5 * MotorR1 + PDsiki;
-      Motor3 = (20 / 9 * GoDir + 300) * MPOWER5 * MotorR1 + PDsiki;
-      Motor4 = 100 * MPOWER5 * MotorR1 + PDsiki;
+      Motor1 = (-20 / 9 * GoDir - 300) * MPOWER * MotorR1 + PDsiki;
+      Motor2 = -100 * MPOWER * MotorR2 + PDsiki;
+      Motor3 = (20 / 9 * GoDir + 300) * MPOWER * MotorR3 + PDsiki;
+      Motor4 = 100 * MPOWER * MotorR4 + PDsiki;
 
       aa = 15; //動作を決める
     }
@@ -2150,7 +2205,6 @@ void loop(void)
     NowTime = millis();
     if (LineResetT < NowTime)  //ようわからんけどラインから離れる動作をする時間が経ったら、もう強制的に全センサーを見るサブステートに行く
     {
-      e = 1;  //進む方向を決めるときにボールによって決められたのか、ラインによって決められたのかを判断するため
       i = 0; //ラインによって全センサーを使えなくしていたがラインを見てから時間が経ったので全センサーを見れるようにする
     };
   };
@@ -2173,14 +2227,15 @@ void loop(void)
     // Serial.print("  M2:"); Serial.print(Motor2);
     // Serial.print("  M3:"); Serial.print(Motor3);
     // Serial.print("  M4:"); Serial.print(Motor4);
-    Serial.print("  NowTime:"); Serial.print(NowTime);
-    Serial.print("  DoTime:"); Serial.print(DoTime);
-    Serial.print("  LineResetT:"); Serial.print(LineResetT);
+    // Serial.print("  NowTime:"); Serial.print(NowTime);
+    // Serial.print("  DoTime:"); Serial.print(DoTime);
+    // Serial.print("  LineResetT:"); Serial.print(LineResetT);
     // Serial.print("  BAtack1"); Serial.print(BAtack1);
-    // Serial.print("  h:"); Serial.print(h);
+    Serial.print("  h:"); Serial.print(h);
     // Serial.print("  i:"); Serial.print(i);
     // Serial.print("  Lpast:"); Serial.print(Lpast);
-    // Serial.print("  hata:"); Serial.print(hata);
+    Serial.print("  hata:"); Serial.print(hata);
+    // Serial.print("  k:"); Serial.print(k);
     // Serial.print("  L_x[0]:"); Serial.print(L_x[0]);
     // Serial.print("  L_y[0]:"); Serial.print(L_y[0]);
     // Serial.print("  L_x[1]:"); Serial.print(L_x[1]);
@@ -2188,12 +2243,12 @@ void loop(void)
     // Serial.print("  c"); Serial.print(c);
     Serial.print("  GoDir:"); Serial.print(GoDir);
     // Serial.print("  PDsiki:"); Serial.print(PDsiki);
-    // Serial.print("  BValue:"); Serial.print(BValue);
-    // Serial.print("  BAngle:"); Serial.print(BAngle);
-    Serial.print("  i:"); Serial.print(i);
-    Serial.print("  e:"); Serial.print(e);
-    Serial.print("  Lnum:"); Serial.print(Lnum);
-    Serial.print("  g:"); Serial.print(g);
+    Serial.print("  BValue:"); Serial.print(BValue);
+    Serial.print("  BAngle:"); Serial.print(BAngle);
+    // Serial.print("  i:"); Serial.print(i);
+    // Serial.print("  e:"); Serial.print(e);
+    // Serial.print("  Lnum:"); Serial.print(Lnum);
+    // Serial.print("  g:"); Serial.print(g);
     Serial.print("  aa:"); Serial.print(aa);
     // Serial.print("  b:"); Serial.print(b);
     Serial.print("  a:");Serial.println(a);
